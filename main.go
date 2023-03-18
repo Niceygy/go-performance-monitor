@@ -57,7 +57,7 @@ func memoryTotal() string {
 	return outputMEM
 }
 
-func diskOut() {
+func diskOut() string {
 	var stat syscall.Statfs_t
 	err := syscall.Statfs("/", &stat)
 	if err != nil {
@@ -69,12 +69,17 @@ func diskOut() {
 
 	fmt.Printf("Total: %d bytes\n", total)
 	fmt.Printf("Free: %d bytes\n", free)
+	percentFree := (float64(total-free) / float64(total)) * 100
+	outputDISK := strconv.FormatUint(uint64(percentFree), 10)
+	return outputDISK
 }
 
 func dbConnect() {
 	db, err := sql.Open("mysql", "go:go@tcp(127.0.0.1:3306)/go")
 	if err != nil {
 		panic(err.Error())
+	} else {
+		fmt.Println("Connected to the database!")
 	}
 	defer db.Close()
 
@@ -92,32 +97,21 @@ func setMID() string {
 	return time.Now().Format("20060102150405")
 }
 
-// func addData() bool {
-// 	res, err := db.Exec("INSERT INTO go(MID, MNAME, CPU, RAM, DISK) VALUES (?, ?)", setMID(), getHostname(), cpuOut(), memoryOut(), diskOut())
-// 	if err != nil {
-// 		panic(err.Error())
-// 		return false
-// 	}
-// 	return true
-// }
+func addData() bool {
+	res, err := db.Exec("INSERT INTO go(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (?, ?)", setMID(), getHostname(), cpuOut(), memoryTotal(), memoryUsed(), diskOut())
+	if err != nil {
+		panic(err.Error())
+		return false
+	}
+	return true
+}
+
+func load() {
+	fmt.Println("Loading! Please wait...")
+	dbConnect()
+	addData()
+}
 
 func main() {
-
-	fmt.Println("Loading!")
-	dbConnect()
-	fmt.Println("Hostname: " + getHostname())
-	fmt.Println("MID: " + setMID())
-
-	i := 0
-	fmt.Println("Loaded!")
-	for {
-		//fmt.Println(i) //debug
-		i++
-		memoryOut()
-		//cpuOut()
-		fmt.Println(cpuOut())
-		time.Sleep(time.Duration(1) * time.Second)
-
-	}
-
+	load()
 }

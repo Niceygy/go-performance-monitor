@@ -8,7 +8,7 @@ import (
 	"time"
 
 	//VSC really does like a space here
-	cpuOut "/stats/cpu.go"
+	"github.com/NiceygyLive/go-performance-monitor/tree/master/stats"
 	_ "github.com/go-sql-driver/mysql"
 )
 

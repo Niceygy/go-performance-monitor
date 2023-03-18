@@ -1,4 +1,4 @@
-module stats
+module github.com/niceygylive/go-performance-monitor/stats
 
 go 1.18
 

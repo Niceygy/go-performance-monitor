@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -13,16 +14,18 @@ import (
 	"github.com/mackerelio/go-osstat/memory"
 )
 
-func memoryOut() {
+func memoryUsed() string {
 	memory, err := memory.Get()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
-		return
+		//return
 	}
 
-	fmt.Printf("memory total: %d bytes\n", memory.Total)
-	fmt.Printf("memory used: %d bytes\n", memory.Used)
-	fmt.Printf("memory cached: %d bytes\n", memory.Cached)
+	//fmt.Printf("memory total: %d bytes\n", memory.Total)
+	//fmt.Printf("memory used: %d bytes\n", memory.Used)
+	//fmt.Printf("memory cached: %d bytes\n", memory.Cached)
+	outputMEM := strconv.FormatUint(memory.Used, 10)
+	return outputMEM
 }
 
 func cpuOut() float64 {

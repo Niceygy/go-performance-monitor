@@ -1,8 +1,10 @@
-package main
+package go_performance_monit
 
 import (
 	"database/sql"
 	"fmt"
+	iou "io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"syscall"
@@ -74,7 +76,7 @@ func diskOut() string {
 	return outputDISK
 }
 
-func dbConnect() {
+func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) bool {
 	db, err := sql.Open("mysql", "go:go@tcp(127.0.0.1:3306)/go")
 	if err != nil {
 		panic(err.Error())
@@ -82,7 +84,13 @@ func dbConnect() {
 		fmt.Println("Connected to the database!")
 	}
 	defer db.Close()
-
+	res, err := db.Exec("INSERT INTO go(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (?, ?)", mid, hostname, cpu, ram_free, ram_total, disk_free)
+	if err != nil {
+		panic(err.Error())
+		return false
+	}
+	fmt.Println(res)
+	return true
 }
 
 func getHostname() string {
@@ -94,22 +102,24 @@ func getHostname() string {
 }
 
 func setMID() string {
-	return time.Now().Format("20060102150405")
-}
-
-func addData() bool {
-	res, err := db.Exec("INSERT INTO go(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (?, ?)", setMID(), getHostname(), cpuOut(), memoryTotal(), memoryUsed(), diskOut())
+	//return time.Now().Format("20060102150405")
+	body, err := iou.ReadFile("/etc/gpm/mid")
 	if err != nil {
-		panic(err.Error())
-		return false
+		log.Fatalf("unable to read file: %v", err)
 	}
-	return true
+	fmt.Println(string(body))
+	if string(body) == "" {
+		fmt.Println("No MID found, generating one...")
+		iou.WriteFile("/etc/gpm/mid", []byte(time.Now().Format("20060102150405")), 0644)
+		return time.Now().Format("20060102150405")
+	} else {
+		return string(body)
+	}
 }
 
 func load() {
 	fmt.Println("Loading! Please wait...")
-	dbConnect()
-	addData()
+
 }
 
 func main() {

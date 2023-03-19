@@ -1,4 +1,4 @@
-module niceygy/sys-monitor
+module go_performance_monit
 
 go 1.18
 

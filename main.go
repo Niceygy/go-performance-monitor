@@ -17,6 +17,8 @@ import (
 	"github.com/mackerelio/go-osstat/memory"
 )
 
+//<-------------------Data Gathering Functions------------------->
+
 func cpuOut() string {
 	//if error run below
 	before, err := cpu.Get()
@@ -41,9 +43,7 @@ func memoryUsed() string {
 	memory, err := memory.Get()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
-		//return
 	}
-
 	outputMEM := strconv.FormatUint(memory.Used, 10)
 	return outputMEM
 }
@@ -76,6 +76,10 @@ func diskOut() string {
 	return outputDISK
 }
 
+//<-------------------Data Gathering Functions End------------------->
+
+//<-------------------Database Functions------------------->
+
 func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) bool {
 	db, err := sql.Open("mysql", "go:go@tcp(127.0.0.1:3306)/go")
 	if err != nil {
@@ -87,11 +91,13 @@ func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) boo
 	res, err := db.Exec("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (?, ?)", mid, hostname, cpu, ram_free, ram_total, disk_free)
 	if err != nil {
 		panic(err.Error())
-		return false
 	}
 	fmt.Println(res)
 	return true
 }
+
+//<-------------------Database Functions End------------------->
+//<-------------------Single run fucntions------------------->
 
 func getHostname() string {
 	hostname, err := os.Hostname()
@@ -102,7 +108,6 @@ func getHostname() string {
 }
 
 func setMID() string {
-	//return time.Now().Format("20060102150405")
 	body, err := iou.ReadFile("/etc/gpm/mid")
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
@@ -117,10 +122,22 @@ func setMID() string {
 	}
 }
 
+func firstRunCheck() bool {
+	_, err := os.Stat("/etc/gpm/mid")
+	if os.IsNotExist(err) {
+		fmt.Println("First run detected, generating MID...")
+		setMID()
+		return true
+	} else {
+		fmt.Println("MID found, continuing...")
+		return false
+
+	}
+}
+
 func load() {
 	fmt.Println("Loading! Please wait...")
-	fmt.Println("MID: " + setMID())
-	fmt.Println("Hostname: " + getHostname())
+	firstRunCheck()
 }
 
 func main() {

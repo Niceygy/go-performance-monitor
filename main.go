@@ -1,4 +1,4 @@
-package go_performance_monit
+package main
 
 import (
 	"database/sql"
@@ -84,7 +84,7 @@ func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) boo
 		fmt.Println("Connected to the database!")
 	}
 	defer db.Close()
-	res, err := db.Exec("INSERT INTO go(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (?, ?)", mid, hostname, cpu, ram_free, ram_total, disk_free)
+	res, err := db.Exec("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (?, ?)", mid, hostname, cpu, ram_free, ram_total, disk_free)
 	if err != nil {
 		panic(err.Error())
 		return false
@@ -119,9 +119,15 @@ func setMID() string {
 
 func load() {
 	fmt.Println("Loading! Please wait...")
-
+	fmt.Println("MID: " + setMID())
+	fmt.Println("Hostname: " + getHostname())
 }
 
 func main() {
 	load()
+	for {
+		UpdateDataDB(setMID(), getHostname(), cpuOut(), memoryUsed(), memoryTotal(), diskOut())
+		time.Sleep(time.Second * 5)
+		fmt.Println("Updated! Sleeping for 5 seconds...")
+	}
 }

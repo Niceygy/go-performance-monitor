@@ -1,4 +1,4 @@
-module go_performance_monit
+module main
 
 go 1.18
 

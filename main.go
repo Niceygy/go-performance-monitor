@@ -76,6 +76,7 @@ func diskOut() string {
 	return outputDISK
 }
 
+//wordPtr := flag.String("word", "foo", "a string")
 //<-------------------Data Gathering Functions End------------------->
 
 //<-------------------Database Functions------------------->
@@ -88,8 +89,9 @@ func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) boo
 		fmt.Println("Connected to the database!")
 	}
 	defer db.Close()
-	fmt.Println("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (", mid, ",", "'", hostname, "'", ",", cpu, ",", ram_free, ",", ram_total, ",", disk_free, ")")
-	res, err := db.Exec("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (", mid, ",", "'", hostname, "'", ",", cpu, ",", ram_free, ",", ram_total, ",", disk_free, ");")
+	dbCommand := "INSERT INTO stats (MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (" + mid + "," + "'" + hostname + "'" + "," + cpu + "," + ram_free + "," + ram_total + "," + disk_free + ")"
+	fmt.Println(dbCommand)
+	res, err := db.Exec(dbCommand)
 	if err != nil {
 		panic(err.Error())
 	}

@@ -89,7 +89,7 @@ func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) boo
 	}
 	defer db.Close()
 	fmt.Println("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (", mid, ",", "'", hostname, "'", ",", cpu, ",", ram_free, ",", ram_total, ",", disk_free, ")")
-	res, err := db.Exec("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (", mid, ",", "'", hostname, "'", ",", cpu, ",", ram_free, ",", ram_total, ",", disk_free, ")")
+	res, err := db.Exec("INSERT INTO stats(MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (", mid, ",", "'", hostname, "'", ",", cpu, ",", ram_free, ",", ram_total, ",", disk_free, ");")
 	if err != nil {
 		panic(err.Error())
 	}

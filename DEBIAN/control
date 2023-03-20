@@ -1,0 +1,7 @@
+Package: xyz.niceygylive.gpm
+Name: Go Performance Monitor Client
+Description: The client for GPM. Visit gpm.niceygylive.xyz for more information.
+Author: Olivia Stephens <niceygy@niceygylive.xyz>
+Maintainer: AW2C Systems Limited <aw2c@niceygylive.xyz>
+Version: 1.0.0
+Architecture: arm64

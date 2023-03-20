@@ -1,0 +1,10 @@
+[Unit]
+Description=Go Performance Monitor
+
+[Service]
+ExecStart=/etc/gpm/main
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

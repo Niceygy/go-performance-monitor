@@ -1,0 +1,13 @@
+echo "Installing GPM Client!"
+mkdir /etc/gpm/
+mkdir /etc/gpm/logs/
+echo "Installing GPM Client!" >> /etc/gpm/logs/gpm-install.log
+mv main /etc/gpm/
+echo "Main binary moved!" >> /etc/gpm/logs/gpm-install.log
+ln -s /etc/gpm/main /usr/bin/gpm
+echo "Main binary linked!" >> /etc/gpm/logs/gpm-install.log
+mv gpm.service /etc/systemd/system/
+systemctl enable gpm
+echo "SCTL Service enabled!" >> /etc/gpm/logs/gpm-install.log
+echo "GPM Client Installed! Please edit /etc/gpm/config to include your mySQL url, then run systemctl start gpm to start the client!" >> /etc/gpm/logs/gpm-install.log
+echo "GPM Client Installed! Please edit /etc/gpm/config to include your mySQL url, then run systemctl start gpm to start the client!"

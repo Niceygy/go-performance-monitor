@@ -89,7 +89,15 @@ func UpdateDataDB(mid, hostname, cpu, ram_free, ram_total, disk_free string) boo
 		fmt.Println("Connected to the database!")
 	}
 	defer db.Close()
-	dbCommand := "INSERT INTO stats (MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK) VALUES (" + mid + "," + "'" + hostname + "'" + "," + cpu + "," + ram_free + "," + ram_total + "," + disk_free + ")"
+	now := time.Now()
+	seconds := now.Second()
+	dbClearOldData := "DELETE FROM stats WHERE SEC = " + strconv.Itoa(seconds)
+	res1, err1 := db.Exec(dbClearOldData)
+	if err1 != nil {
+		panic(err1.Error())
+	}
+	fmt.Println(res1)
+	dbCommand := "INSERT INTO stats (MID, MNAME, CPU, RAM_TOTAL, RAM_USED, DISK, SEC) VALUES (" + mid + "," + "'" + hostname + "'" + "," + cpu + "," + ram_free + "," + ram_total + "," + disk_free + "," + strconv.Itoa(seconds) + ")"
 	fmt.Println(dbCommand)
 	res, err := db.Exec(dbCommand)
 	if err != nil {
@@ -147,7 +155,7 @@ func main() {
 	load()
 	for {
 		UpdateDataDB(setMID(), getHostname(), cpuOut(), memoryUsed(), memoryTotal(), diskOut())
-		time.Sleep(time.Second * 5)
-		fmt.Println("Updated! Sleeping for 5 seconds...")
+		time.Sleep(time.Second * 2)
+		fmt.Println("Updated! Sleeping for 2 seconds...")
 	}
 }

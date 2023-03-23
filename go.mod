@@ -1,4 +1,4 @@
-module main
+module gpm_nicey
 
 go 1.18
 

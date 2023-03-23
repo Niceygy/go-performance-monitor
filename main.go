@@ -1,4 +1,4 @@
-package main
+package gpm_nicey
 
 import (
 	"database/sql"
